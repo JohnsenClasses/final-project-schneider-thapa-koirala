@@ -1,7 +1,6 @@
 #Web API to store sensor data and retrive the sensor data
 
 #imports
-from audioop import avg
 from datetime import datetime
 from dateutil import parser
 from databases import Database
