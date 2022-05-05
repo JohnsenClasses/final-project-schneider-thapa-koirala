@@ -1,14 +1,20 @@
 #Web API to store sensor data and retrive the sensor data
 
 #imports
+from audioop import avg
+from datetime import datetime
+from dateutil import parser
 from databases import Database
 from fastapi import FastAPI
+from numpy import average
 from pydantic import BaseModel
 import pandas as pd
 import sqlite3
 
 app = FastAPI()
-database = Database("sqlite:///DatabaseFolder/sqlitesensordata.db") #replace folder and db file name
+
+database = Database("sqlite:///DatabaseFolder/sqlitesensordata.db" )
+ 
 
 class SensorData(BaseModel):
     Latitude:   float
@@ -29,37 +35,75 @@ async def close_database():
 def read_root():
     return[{"Hello":"Sensor World"}]
 
-""" @app.put("/sensor_data")
-async def put_data(data:SensorData):
-    return await database.execute("INSERT INTO sensortable (Temperature_1,Humidity_1,Temperature_2,Humidity_2) VALUES (:Temperature_1,:Humidity_1,:Temperature_2,:Humidity_2)",
-        {"Temperature_1":data.Temperature_1,"Humidity_1":data.Humidity_1,"Temperature_2":data.Temperature_2,"Humidity_2":data.Humidity_2})  """
-
+####################################################################################################################
+# data storing
 @app.put("/sensor_data")
 async def put_data(data:SensorData):
     return await database.execute("INSERT INTO sensortable (Latitude,Longitude,Temperature,Humidity) VALUES (:Latitude,:Longitude,:Temperature,:Humidity)",
         {"Latitude":data.Latitude,"Longitude":data.Longitude,"Temperature":data.Temperature,"Humidity":data.Humidity}) 
 
+#######################################################################################################################
+#shows all data contained in the database
 @app.get("/sensor_data")
 async def get_data_flowers():
     return await database.fetch_all("SELECT * FROM sensortable")
 
+#####################################################################################################################
+# history of temperature and humidity for a particular location 
+@app.get("/sensor_data/{Latitude}/{Longitude}")
+async def get_data_genus(Latitude:float,Longitude:float):
+    return await database.fetch_all("SELECT * FROM sensortable WHERE Latitude=:Latitude AND Longitude=:Longitude",{"Latitude":Latitude,"Longitude":Longitude})
 
-@app.get("/sensor_data/{}")
-async def get_data_genus(a_genus:str):
-    return await database.fetch_all("SELECT * FROM flower WHERE genus=:g_name",{"g_name":a_genus})
+##########################################################################################################################
+#temperature and humidity data from a specific time to current time
+@app.get("/sensor_data/{Date}")   #user input date to current time, the user input datetime format should be in 2022-05-04 18:11:52
+async def get_Sensor_data_fromDate(Date:datetime):
+    return await database.fetch_all("SELECT * FROM sensortable WHERE Timestamp>=:Date",{"Date":Date})
 
-@app.get("/flowers/{a_genus}/{a_species}")
-async def get_data_genus_species(a_genus:str,a_species:str):
-    return await database.fetch_all("SELECT * FROM flower WHERE genus=:g_name AND species=:s_name",{"g_name":a_genus,"s_name":a_species})
+##########################################################################################################################
+# temperature and humidity data between two points of time
+@app.get("/sensor_data/between/{FromDate}/{ToDate}")   #user inputs Form and to  dates in  this format 2022-05-04 18:11:52
+async def get_Sensor_data_between_Dates(FromDate:datetime,ToDate:datetime):
+    return await database.fetch_all("SELECT * FROM sensortable WHERE Timestamp BETWEEN :FromDate AND :ToDate",{"FromDate":FromDate,"ToDate":ToDate})
 
-@app.get("/flowers/{a_genus}/{a_species}/petals/avg")
-async def get_data_genus_species_petal_avg(a_genus:str,a_species:str):
-        return await database.fetch_all(f"SELECT AVG(petal_count) as avg FROM flower WHERE genus='{a_genus}' AND species='{a_species}'")
 
-@app.get("/flowers/{a_genus}/{a_species}/petals/min")
-async def get_data_genus_species_petal_avg(a_genus:str,a_species:str):
-        return await database.fetch_all(f"SELECT MIN(petal_count) as min FROM flower WHERE genus='{a_genus}' AND species='{a_species}'")
-     
-@app.get("/flowers/{a_genus}/{a_species}/petals/max")
-async def get_data_genus_species_petal_avg(a_genus:str,a_species:str):
-        return await database.fetch_all(f"SELECT MAX(petal_count) as max FROM flower WHERE genus='{a_genus}' AND species='{a_species}'")
+#################################################################################################################################
+# temperature and humidity data for a particular day
+@app.get("/sensor_data/of_a_day/24hours/{Date}")   #date in  this format 2022-05-04 18:11:52
+async def get_Sensor_data_of_a_day(Date:str):
+    datestring = parser.parse(Date).strftime("%Y:%m:%d")
+    daystart_string = datestring + " 00:00:00"
+    dayend_string = datestring + " 23:59:59"
+    daystart = parser.parse(daystart_string)
+    dayend =parser.parse(dayend_string)
+    return await database.fetch_all("SELECT * FROM sensortable WHERE Timestamp BETWEEN :daystart AND :dayend",{"daystart":daystart,"dayend":dayend})
+
+#minmum temperature and minmum humidity for a day
+@app.get("/sensor_data/of_a_day/24hours/{Date}/temperatureHumidity/Min")   #date in  this format 2022-05-04 18:11:52
+async def get_Sensor_data_of_a_day(Date:str):
+    datestring = parser.parse(Date).strftime("%Y:%m:%d")
+    daystart_string = datestring + " 00:00:00"
+    dayend_string = datestring + " 23:59:59"
+    daystart = parser.parse(daystart_string)
+    dayend =parser.parse(dayend_string)
+    return await database.fetch_all("SELECT MIN(Temperature),MIN(Humidity) FROM sensortable WHERE Timestamp BETWEEN :daystart AND :dayend",{"daystart":daystart,"dayend":dayend})
+
+#Maximum temperature and maximum humidity for a day
+@app.get("/sensor_data/of_a_day/24hours/{Date}/temperatureHumidity/Max")   #date in  this format 2022-05-04 18:11:52
+async def get_Sensor_data_of_a_day(Date:str):
+    datestring = parser.parse(Date).strftime("%Y:%m:%d")
+    daystart_string = datestring + " 00:00:00"
+    dayend_string = datestring + " 23:59:59"
+    daystart = parser.parse(daystart_string)
+    dayend =parser.parse(dayend_string)
+    return await database.fetch_all("SELECT MAX(Temperature),MAX(Humidity) FROM sensortable WHERE Timestamp BETWEEN :daystart AND :dayend",{"daystart":daystart,"dayend":dayend})
+
+# average temperature and average humidity for a day
+@app.get("/sensor_data/of_a_day/24hours/{Date}/temperatureHumidity/Avg")   #date in  this format 2022-05-04 18:11:52
+async def get_Sensor_data_of_a_day(Date:str):
+    datestring = parser.parse(Date).strftime("%Y:%m:%d")
+    daystart_string = datestring + " 00:00:00"
+    dayend_string = datestring + " 23:59:59"
+    daystart = parser.parse(daystart_string)
+    dayend =parser.parse(dayend_string)
+    return await database.fetch_all("SELECT AVG(Temperature),AVG(Humidity) FROM sensortable WHERE Timestamp BETWEEN :daystart AND :dayend",{"daystart":daystart,"dayend":dayend})
