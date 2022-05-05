@@ -11,7 +11,7 @@ from pydantic import BaseModel
 import pandas as pd
 import sqlite3
 
-app = FastAPI()
+app = FastAPI(root_path="/wAPI")
 
 database = Database("sqlite:///DatabaseFolder/sqlitesensordata.db" )
  
