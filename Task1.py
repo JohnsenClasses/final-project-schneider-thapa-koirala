@@ -44,13 +44,13 @@ async def put_data(data:SensorData):
 #######################################################################################################################
 #shows all data contained in the database
 @app.get("/sensor_data")
-async def get_data_flowers():
+async def get_data_sensor():
     return await database.fetch_all("SELECT * FROM sensortable")
 
 #####################################################################################################################
 # history of temperature and humidity for a particular location 
 @app.get("/sensor_data/{Latitude}/{Longitude}")
-async def get_data_genus(Latitude:float,Longitude:float):
+async def get_data_bylocation(Latitude:float,Longitude:float):
     return await database.fetch_all("SELECT * FROM sensortable WHERE Latitude=:Latitude AND Longitude=:Longitude",{"Latitude":Latitude,"Longitude":Longitude})
 
 ##########################################################################################################################

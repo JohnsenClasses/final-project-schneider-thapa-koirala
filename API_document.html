@@ -1,21 +1,25 @@
 <html>
         <head>
             <title></title>
-           <center><h1>Get Weather Info API</h1></center>
+           <center><h1>Get Weather Info API Documentation</h1></center>
       
         </head>
         <body>
+        <b>How does our API work?</b>
            <p>
-           Currently, <b>Get Weather Info API</b> provides hypothetical sensor data (temperature and humidity) at two research locations: UGA, Athens (Lat: 33.948 Lon: -83.377) and UGA, Tifton (Lat: 31.479 Lon: -83.521). In the near future, more research locations will be added.
+           Currently, <b>Get Weather Info API</b> provides hypothetical sensor data (temperature and humidity) at two locations: UGA, Athens (Lat: 33.948 Lon: -83.377) and UGA, Tifton (Lat: 31.479 Lon: -83.521). In the near future, more locations will be added. 
            </p> 
+           <p>
+           Our API is formatted in a structure known as <a href="https://www.w3.org/standards/webarch/metaformats.html">JSON</a>.
+           </p>
            <p>
            <center><h3>Get Weather Info Endpoints</h3></center>
            </p>
            <ul>
-               <li><b>API documentation</b></li>
+               <li><b>Use this host_url to access the main webpage</b></li>
                <p>
                
-               <a href="https://getweatherinfo.ga/wAPI/"><code>https://getweatherinfo.ga/wAPI</code></a>
+               <a href="https://getweatherinfo.ga"><code>https://getweatherinfo.ga</code></a>
                </p>
                
                <li><b>API's interactive user interface (FastAPI's docs)</b></li>
@@ -23,20 +27,156 @@
                <a href="https://getweatherinfo.ga/wAPI/docs"><code>https://getweatherinfo.ga/wAPI/docs</code></a>
                </p>
                
-               <li><b>Access all sensor data from all locations</b></li>
+               <li><b>Access all sensor data for both locations</b></li>
                <p>
-               <a href="https://getweatherinfo.ga/wAPI/sensor_data"><code>https://getweatherinfo.ga/wAPI/sensor_data</code></a>
-               </p>
-               <li><b>Access sensor data for a particular location</b></li>
-               Currently, API's has sensor data from two locations
+               Humidity and temperature data of every two-minutes interval for both locations.
                <p>
-               <code>https://getweatherinfo.ga/wAPI/{Latitude}/{Longitude}</code>
+               Example of the request: <a href="https://getweatherinfo.ga/wAPI/sensor_data"><code>https://getweatherinfo.ga/wAPI/sensor_data</code></a>
+               <p>
+               Example of the response:     
+               </p> 
+              <div class="code">
+              <xmp>
+  [
+  {
+    "ID": 249,
+    "Latitude": 33.948,
+    "Longitude": -83.377,
+    "Temperature": 82,
+    "Humidity": 43,
+    "Timestamp": "2022-05-04 18:06:05"
+  },
+  {
+    "ID": 250,
+    "Latitude": 31.479,
+    "Longitude": -83.521,
+    "Temperature": 89,
+    "Humidity": 58,
+    "Timestamp": "2022-05-04 18:06:07"
+  },
+  {
+    "ID": 251,
+    "Latitude": 33.948,
+    "Longitude": -83.377,
+    "Temperature": 80,
+    "Humidity": 43,
+    "Timestamp": "2022-05-04 18:06:10"
+  }
+              </xmp>
+              </div>
+               <li><b>Access humidity and temperature data for a particular location</b></li>
+               Currently, API's has sensor data from two locations; UGA, Athens (Lat: 33.948 Lon: -83.377) and UGA, Tifton (Lat: 31.479 Lon: -83.521). 
+               <p>
+               <code>https://getweatherinfo.ga/wAPI/sensor_data/{Latitude}/{Longitude}</code>
                </p>
-               <li>Documentation</li>
+               <li><b>
+                 Access humidity and temperature data for provided date to current date</b> 
+                 <p>
+                 User input datetime format; 2022-05-04 18:11:52
+                 </p>
+               </li>
+               <p>
+               <code>
+               https://getweatherinfo.ga/wAPI/sensor_data/{Date}
+               </code>
+             <li><b>
+                 Access humidity and temperature data between two time points</b> 
+                 <p>
+                 User input datetime format; 2022-05-04 18:11:52
+                 </p>
+               </li>
+               <p>
+               <code>
+               https://getweatherinfo.ga/wAPI/sensor_data/between/{FromDate}/{ToDate}
+               
+               </code>
+               <li><b>
+                 Access humidity and temperature data for a particular day</b> 
+                 <p>
+                 User input datetime format; 2022-05-04 18:11:52
+                 </p>
+               </li>
+               <p>
+               <code>
+               https://getweatherinfo.ga/wAPI/sensor_data/of_a_day/24hours/{Date}
+               
+               </code>
+               <li><b>
+                 Access minimum temperature and humidity for a particular day</b> 
+                 <p>
+                 User input datetime format; 2022-05-04 18:11:52
+                 </p>
+               </li>
+               <p>
+               <code>
+               https://getweatherinfo.ga/wAPI/sensor_data/of_a_day/24hours/{Date}/temperatureHumidity/Min"
+               
+               </code>
+               <li><b>
+                 Access maximum temperature and humidity for a particular day</b> 
+                 <p>
+                 User input datetime format; 2022-05-04 18:11:52
+                 </p>
+               </li>
+               <p>
+               <code>
+               https://getweatherinfo.ga/wAPI/sensor_data/of_a_day/24hours/{Date}/temperatureHumidity/Max"
+               
+               </code>
+               <li><b>
+                 Access average temperature and humidity for a day</b> 
+                 <p>
+                 User input datetime format; 2022-05-04 18:11:52
+                 </p>
+               </li>
+               <p>
+               <code>
+               https://getweatherinfo.ga/wAPI/sensor_data/of_a_day/24hours/{Date}/temperatureHumidity/Avg"
+               
+               </ul>
+           <br>
            
-           </ul>
-           <p>
+                         <center>
+                 <h2>
+                 <b>
+                   Description of the variables used for the API 
+                 </b>
+                 </h2>
+                 
+               </center>
            
-           </p>
+           <table style="margin-left:auto;margin-right:auto;">
+  <colgroup>
+    <col span="6" style="background-color:lightgrey">
+    <col style="background-color:lightgrey">
+  </colgroup>
+  <tr>
+    <th>Variable</th>
+    <th>Unit</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>Lat, Lon</td>
+    <td>degree</td>
+    <td>latitude and longitude of the location</td>
+  </tr>
+    <tr>
+    <td>Temperature</td>
+    <td>farhenheit</td>
+    <td>temperature of the location</td>
+  </tr>
+    <tr>
+    <td>Relative humidity</td>
+    <td>percentage</td>
+    <td>relative humidity of location</td>
+  </tr>
+  <tr>
+    <td>Date</td>
+    <td>year:month:day h:m:s</td>
+    <td>specific date and time</td>
+  </tr>
+</table>
+
+           
         </body>
-    </html>
+</html>
