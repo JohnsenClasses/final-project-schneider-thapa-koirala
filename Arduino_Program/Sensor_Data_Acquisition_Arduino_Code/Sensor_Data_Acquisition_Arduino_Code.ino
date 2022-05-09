@@ -7,7 +7,7 @@ long loc2_temp;
 long loc1_hum;
 long loc2_hum;
 
-int Time = 5000;  //time interval data records
+unsigned long Time = 120000;  //(2 minutes)time interval data records
 
 void setup() {
   Serial.begin(9600);
