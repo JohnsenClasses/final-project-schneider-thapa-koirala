@@ -7,7 +7,7 @@ long loc2_temp;
 long loc1_hum;
 long loc2_hum;
 
-unsigned long Time = 120000;  //(2 minutes)time interval data records
+unsigned long Time =2000;   //120000;  //(2 minutes)time interval data records
 
 void setup() {
   Serial.begin(9600);
@@ -16,10 +16,10 @@ void setup() {
 void loop() {
 
 //Random sensor data generation, in real world analog signal from sensor can be read from analogRead() function
-loc1_temp=random(80,85);;
-loc2_temp=random(85,90);
-loc2_hum=random(55,60);
-loc1_hum=random(40,45);
+loc1_temp=random(64,72);;
+loc2_temp=random(68,73);
+loc2_hum=random(56,63);
+loc1_hum=random(55,60);
 
 //serial monitor outputing in the format: latitude1 Longitude1 Temperature1 Humidity1 Latitude2 Longitude2 Temperature2 Humidity2
 //example: 3.948 -83.377 80 50 31.479 -83.521 85 60
