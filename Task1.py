@@ -1,12 +1,10 @@
 #Web API to store sensor data and retrive the sensor data
 
 #imports
-from datetime import datetime
-from dateutil import parser
+from datetime import datetime, timedelta
 from databases import Database
 from fastapi import FastAPI
 from pydantic import BaseModel
-import pandas as pd
 import sqlite3
 
 app = FastAPI(root_path="/wAPI")
@@ -64,45 +62,32 @@ async def get_Sensor_data_fromDate(Date:datetime):
 async def get_Sensor_data_between_Dates(FromDate:datetime,ToDate:datetime):
     return await database.fetch_all("SELECT * FROM sensortable WHERE Timestamp BETWEEN :FromDate AND :ToDate",{"FromDate":FromDate,"ToDate":ToDate})
 
-
 #################################################################################################################################
 # temperature and humidity data for a particular day
 @app.get("/sensor_data/of_a_day/24hours/{Date}")   #date in  this format 2022-05-04
 async def get_Sensor_data_of_a_day(Date:str):
-    datestring = parser.parse(Date).strftime("%Y:%m:%d")
-    daystart_string = datestring + " 00:00:00"
-    dayend_string = datestring + " 23:59:59"
-    daystart = parser.parse(daystart_string)
-    dayend =parser.parse(dayend_string)
+    daystart = datetime.strptime(Date, '%Y-%m-%d')
+    dayend = daystart + timedelta(hours=23,minutes=59,seconds=59)
     return await database.fetch_all("SELECT * FROM sensortable WHERE Timestamp BETWEEN :daystart AND :dayend",{"daystart":daystart,"dayend":dayend})
 
 #minmum temperature and minmum humidity for a day
 @app.get("/sensor_data/of_a_day/24hours/{Date}/temperatureHumidity/Min")   #date in  this format 2022-05-04
 async def get_Sensor_data_of_a_day(Date:str):
-    datestring = parser.parse(Date).strftime("%Y:%m:%d")
-    daystart_string = datestring + " 00:00:00"
-    dayend_string = datestring + " 23:59:59"
-    daystart = parser.parse(daystart_string)
-    dayend =parser.parse(dayend_string)
+    daystart = datetime.strptime(Date, '%Y-%m-%d')
+    dayend = daystart + timedelta(hours=23,minutes=59,seconds=59)
     return await database.fetch_all("SELECT MIN(Temperature),MIN(Humidity) FROM sensortable WHERE Timestamp BETWEEN :daystart AND :dayend",{"daystart":daystart,"dayend":dayend})
 
 #Maximum temperature and maximum humidity for a day
 @app.get("/sensor_data/of_a_day/24hours/{Date}/temperatureHumidity/Max")   #date in  this format 2022-05-04
 async def get_Sensor_data_of_a_day(Date:str):
-    datestring = parser.parse(Date).strftime("%Y:%m:%d")
-    daystart_string = datestring + " 00:00:00"
-    dayend_string = datestring + " 23:59:59"
-    daystart = parser.parse(daystart_string)
-    dayend =parser.parse(dayend_string)
+    daystart = datetime.strptime(Date, '%Y-%m-%d')
+    dayend = daystart + timedelta(hours=23,minutes=59,seconds=59)
     return await database.fetch_all("SELECT MAX(Temperature),MAX(Humidity) FROM sensortable WHERE Timestamp BETWEEN :daystart AND :dayend",{"daystart":daystart,"dayend":dayend})
 
 # average temperature and average humidity for a day
 @app.get("/sensor_data/of_a_day/24hours/{Date}/temperatureHumidity/Avg")   #date in  this format 2022-05-04
 async def get_Sensor_data_of_a_day(Date:str):
-    datestring = parser.parse(Date).strftime("%Y:%m:%d")
-    daystart_string = datestring + " 00:00:00"
-    dayend_string = datestring + " 23:59:59"
-    daystart = parser.parse(daystart_string)
-    dayend =parser.parse(dayend_string)
+    daystart = datetime.strptime(Date, '%Y-%m-%d')
+    dayend = daystart + timedelta(hours=23,minutes=59,seconds=59)
     return await database.fetch_all("SELECT AVG(Temperature),AVG(Humidity) FROM sensortable WHERE Timestamp BETWEEN :daystart AND :dayend",{"daystart":daystart,"dayend":dayend})
     
