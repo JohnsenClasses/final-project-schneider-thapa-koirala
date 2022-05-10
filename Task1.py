@@ -5,7 +5,6 @@ from datetime import datetime
 from dateutil import parser
 from databases import Database
 from fastapi import FastAPI
-from numpy import average
 from pydantic import BaseModel
 import pandas as pd
 import sqlite3
